@@ -1,0 +1,36 @@
+<!--
+    Friendly Telegram (telegram userbot)
+    Copyright (C) 2018-2019 The Authors
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+{% extends "base.jinja2" %}
+
+{% block title %}
+Friendly-Telegram Mod
+{% endblock %}
+
+{% block content %}
+<div class="mdl-card__title">
+  <h3 class="mdl-card__title-text">Добро пожаловать в веб интерфейс Friendly-Telegram Mod</h3>
+</div>
+<div class="mdl-card__supporting-text">
+  Здесь вы можете настроить различные функции Friendly-Telegram, а также получить доступ к инструментам отладки и отчетам о состоянии
+  <br>
+  Вы вошли как {{ name }} ({{ uid }}).
+  <br>
+  Нажмите на меню слева чтобы начать.
+</div>
+{% endblock %}

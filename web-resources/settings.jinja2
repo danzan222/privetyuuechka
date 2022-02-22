@@ -1,0 +1,130 @@
+<!--
+    Friendly Telegram (telegram userbot)
+    Copyright (C) 2018-2019 The Authors
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+
+{% set ns = namespace(module_number=0) %}
+{% set ns2 = namespace(module_number=0) %}
+
+{% extends "base.jinja2" %}
+
+{% block head %}
+  <script src="{{ static('settings.js') }}"></script>
+{% endblock %}
+
+{% block title %}
+  Friendly-Telegram Mod
+{% endblock %}
+
+{% block content %}
+  <div class="mdl-card__title">
+    <h3 class="mdl-card__title-text">Добро пожаловать в веб интерфейс Friendly-Telegram Mod</h3>
+  </div>
+  <div class="mdl-card__supporting-text">
+    Здесь вы можете настроить различные функции Friendly-Telegram, а также получить доступ к инструментам отладки и отчетам о состоянии
+    <br><br>
+    Сейчас вы управляете разрешениями
+    <p><strong>Вы должны перезагрузиться после изменения любой из этих настроек, иначе они не вступят в силу</strong></p>
+    {% for module in modules %}
+      {% set ns.module_number = ns.module_number + 1 %}
+      {% if module.commands %}
+        <br>
+        <a href="#module_{{ ns.module_number }}">{{ module.name }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endblock %}
+
+{% block after %}
+  <br>
+  <div class="mdl-card mdl-shadow--2dp padded" style="width:100%;">
+    <div class="mdl-card__title">
+      <h3 class="mdl-card__title-text">Разрешения</h3>
+    </div>
+    <div class="mdl-card__supporting-text">
+      <p>Вы можете настроить, какие разрешения включены и кто в них находится ниже</p>
+      <p><strong>Если переключатель отключен здесь, он отключается универсально для всех команд</strong></p>
+      {% include 'permission_setting.jinja2' %}
+    </div>
+  </div>
+
+
+  <br>
+  <div class="mdl-card mdl-shadow--2dp padded" style="width: 100%;" id="groups">
+    <div class="mdl-card__title">
+      <h4 class="mdl-card__title-text">Permission Groups</h4>
+    </div>
+    <div class="mdl-cad__supporting-text" style="width:100%;">
+      <h5 style="font-weight: 300;">Владелец</h5>
+      <p>Владелец - это высший уровень привилегий. Они могут использовать любую команду по умолчанию (хотя это можно настроить). Введите следующие ID, разделенные запятыми, или оставьте пустым, чтобы использовать текущего пользователя, вошедшего в систему.</p>
+      <br>
+      <form action="#">
+        <div class="mdl-textfield mdl-js-textfield">
+          <input class="mdl-textfield__input" type="text" pattern="([0-9]+(,\s*|$))+" id="owner_ids" data-defaultvalue="" data-currentvalue="{{ owner }}" value="{{ owner }}" onchange="setGroup(this, 'owner');">
+          <label class="mdl-textfield__label" for="owner_id">IDs Владельца...</label>
+          <span class="mdl-textfield__error">Не число!</span>
+        </div>
+      </form>
+
+      <br>
+      <h5 style="font-weight: 300;">Sudo</h5>
+      <p>Sudo - это самый высокий уровень привилегий, не являющийся владельцем. Они могут использовать большинство команд по умолчанию. Введите идентификаторы ниже, разделенные запятыми.</p>
+      <br>
+      <form action="#">
+        <div class="mdl-textfield mdl-js-textfield">
+          <input class="mdl-textfield__input" type="text" pattern="([0-9]+(,\s*|$))+" id="sudo_ids" data-defaultvalue="" data-currentvalue="{{ sudo }}" value="{{ sudo }}" onchange="setGroup(this, 'sudo');">
+          <label class="mdl-textfield__label" for="sudo_ids">Sudo IDs...</label>
+          <span class="mdl-textfield__error">Не разделенный запятыми список чисел!</span>
+        </div>
+      </form>
+
+      <br>
+      <h5 style="font-weight: 300;"></h5>
+      <p>Помощник имеют самый низкий специальный уровень привилегий. По умолчанию они могут использовать только несколько команд. Введите идентификаторы ниже, разделенные запятыми.</p>
+      <br>
+      <form action="#">
+        <div class="mdl-textfield mdl-js-textfield">
+          <input class="mdl-textfield__input" type="text" pattern="([0-9]+(,\s*|$))+" id="support_ids" data-defaultvalue="" data-currentvalue="{{ sudo }}" value="{{ support }}" onchange="setGroup(this, 'support');">
+          <label class="mdl-textfield__label" for="support_ids">IDs Помощника...</label>
+          <span class="mdl-textfield__error">Не разделенный запятыми список чисел!</span>
+        </div>
+      </form>
+      <br>
+    </div>
+  </div>
+
+
+  {% for module in modules %}
+    {% set ns2.module_number = ns2.module_number + 1 %}
+    {% if module.commands %}
+      <br>
+      <div class="mdl-card mdl-shadow--2dp padded" style="width: 100%;" id="module_{{ ns2.module_number }}">
+        <div class="mdl-card__title">
+          <h4 class="mdl-card__title-text">{{ module.name }}</h4>
+        </div>
+        <div class="mdl-cad__supporting-text" style="width:100%;">
+          <p>{{ module|getdoc }}</p>
+          {% for command_name, command in module.commands.items() %}
+            <br>
+            <h5 style="font-weight: 300;">{{ command_name }}</h5>
+            {% include 'permission_setting.jinja2' %}
+            <br>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
